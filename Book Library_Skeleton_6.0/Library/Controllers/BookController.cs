@@ -122,5 +122,31 @@
             return this.RedirectToAction("All", "Book"); 
         }
 
+        [HttpPost]
+        public async Task<IActionResult> RemoveFromCollection(int bookId)
+        {
+            if (await this.bookService.IsBookExistingByIdAsync(bookId) == false)
+            {
+                return this.RedirectToAction("Index", "Home");
+            }
+
+            string userId = this.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (await this.bookService.IsInCollectionAsync(bookId, userId) == false)
+            {
+                return this.RedirectToAction("All", "Book");
+            }
+
+            try
+            {
+                await this.bookService.RemoveFromCollectionAsync(bookId, userId);
+            }
+            catch (Exception)
+            {
+                return this.RedirectToAction("Index", "Home");
+            }
+
+            return this.RedirectToAction("Mine", "Book");
+        }
     }
 }

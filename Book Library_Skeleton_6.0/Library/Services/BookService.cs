@@ -99,5 +99,14 @@
 
             return isInCollection;
         }
+
+        public async Task RemoveFromCollectionAsync(int bookId, string userId)
+        {
+            ApplicationUserBook applicationUserBook = await this.dbContext.ApplicationUsersBooks
+                .FirstAsync(ub => ub.BookId == bookId && ub.ApplicationUserId == userId);
+
+            this.dbContext.ApplicationUsersBooks.Remove(applicationUserBook);
+            await this.dbContext.SaveChangesAsync();
+        }
     }
 }

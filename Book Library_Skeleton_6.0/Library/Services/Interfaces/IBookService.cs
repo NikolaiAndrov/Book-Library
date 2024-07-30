@@ -15,5 +15,7 @@
         Task<bool> IsBookExistingByIdAsync(int bookId);
 
         Task<bool> IsInCollectionAsync(int bookId, string userId);
+
+        Task RemoveFromCollectionAsync(int bookId, string userId);
     }
 }
