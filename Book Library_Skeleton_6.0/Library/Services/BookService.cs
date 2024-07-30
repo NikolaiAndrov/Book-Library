@@ -33,6 +33,18 @@
             await this.dbContext.SaveChangesAsync();
         }
 
+        public async Task AddToCollectionAsync(int bookId, string userId)
+        {
+            ApplicationUserBook applicationUserBook = new ApplicationUserBook
+            {
+                BookId = bookId,
+                ApplicationUserId = userId
+            };
+
+            await this.dbContext.ApplicationUsersBooks.AddAsync(applicationUserBook);
+            await this.dbContext.SaveChangesAsync();
+        }
+
         public async Task<IEnumerable<BookAllViewModel>> GetAllBooksAsync()
         {
             IEnumerable<BookAllViewModel> books = await this.dbContext.Books
@@ -68,6 +80,24 @@
                 .ToArrayAsync();
 
             return myBooks;
+        }
+
+        public async Task<bool> IsBookExistingByIdAsync(int bookId)
+        {
+            bool isExisting = await this.dbContext.Books
+                .AsNoTracking()
+                .AnyAsync(b => b.Id == bookId);
+
+            return isExisting;
+        }
+
+        public async Task<bool> IsInCollectionAsync(int bookId, string userId)
+        {
+            bool isInCollection = await this.dbContext.ApplicationUsersBooks
+                .AsNoTracking()
+                .AnyAsync(ub => ub.ApplicationUserId == userId && ub.BookId == bookId);
+
+            return isInCollection;
         }
     }
 }
