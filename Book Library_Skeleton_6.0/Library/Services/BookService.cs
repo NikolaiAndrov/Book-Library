@@ -19,6 +19,7 @@
         public async Task<IEnumerable<BookAllViewModel>> GetAllBooksAsync()
         {
             IEnumerable<BookAllViewModel> books = await this.dbContext.Books
+                .AsNoTracking()
                 .Select(b => new BookAllViewModel
                 {
                     Id = b.Id,
@@ -36,6 +37,7 @@
         public async Task<IEnumerable<BookMineViewModel>> GetMyBooksAsync(string userId)
         {
             IEnumerable<BookMineViewModel> myBooks = await this.dbContext.ApplicationUsersBooks
+                .AsNoTracking()
                 .Where(ub => ub.ApplicationUserId == userId)
                 .Select(ub => new BookMineViewModel
                 {

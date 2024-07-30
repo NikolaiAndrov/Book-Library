@@ -5,16 +5,17 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using System.Security.Claims;
-    using System.Security.Permissions;
 
     [Authorize]
     public class BookController : Controller
     {
         private readonly IBookService bookService;
+        private readonly ICategoryService categoryService;
 
-        public BookController(IBookService bookService)
+        public BookController(IBookService bookService, ICategoryService categoryService)
         {
             this.bookService = bookService;
+            this.categoryService = categoryService;
         }
 
         [HttpGet]
@@ -50,6 +51,22 @@
             }
 
             return View(myBooks);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Add()
+        {
+            BookAddPostModel model = new BookAddPostModel();
+            try
+            {
+                model.Categories = await this.categoryService.GetAllCategoriesAsync();
+            }
+            catch (Exception)
+            {
+                return this.RedirectToAction("Index", "Home");
+            }
+
+            return this.View(model);
         }
     }
 }
