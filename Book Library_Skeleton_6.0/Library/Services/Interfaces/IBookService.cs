@@ -5,5 +5,7 @@
     public interface IBookService
     {
         Task<IEnumerable<BookAllViewModel>> GetAllBooksAsync();
+
+        Task<IEnumerable<BookMineViewModel>> GetMyBooksAsync(string userId);
     }
 }

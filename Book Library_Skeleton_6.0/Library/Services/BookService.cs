@@ -32,5 +32,23 @@
 
             return books;
         }
+
+        public async Task<IEnumerable<BookMineViewModel>> GetMyBooksAsync(string userId)
+        {
+            IEnumerable<BookMineViewModel> myBooks = await this.dbContext.ApplicationUsersBooks
+                .Where(ub => ub.ApplicationUserId == userId)
+                .Select(ub => new BookMineViewModel
+                {
+                    Id = ub.Book.Id,
+                    ImageUrl = ub.Book.ImageUrl,
+                    Title = ub.Book.Title,
+                    Author = ub.Book.Author,
+                    Description = ub.Book.Description,
+                    Category = ub.Book.Category.Name
+                })
+                .ToArrayAsync();
+
+            return myBooks;
+        }
     }
 }
