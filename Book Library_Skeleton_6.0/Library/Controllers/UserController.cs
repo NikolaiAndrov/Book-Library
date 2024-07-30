@@ -22,68 +22,95 @@
         [AllowAnonymous]
         public IActionResult Register()
         {
-            return this.View();
+            bool isAuthenticated = this.User?.Identity?.IsAuthenticated ?? false;
+
+            if (isAuthenticated == false)
+            {
+                return this.View();
+            }
+
+            return this.RedirectToAction("Index", "Home");
         }
 
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Register(UserRegisterFormModel model)
         {
-            if (!this.ModelState.IsValid)
+            bool isAuthenticated = this.User?.Identity?.IsAuthenticated ?? false;
+
+            if (isAuthenticated == false)
             {
-                return this.View(model);
-            }
-
-            ApplicationUser user = new ApplicationUser
-            {
-                UserName = model.UserName,
-                Email = model.Email,
-                Password = model.Password
-            };
-
-            await this.userManager.SetEmailAsync(user, model.Email);
-            await this.userManager.SetUserNameAsync(user, model.UserName);
-
-            IdentityResult result = await this.userManager.CreateAsync(user, model.Password);
-
-            if (!result.Succeeded)
-            {
-                foreach (IdentityError error in result.Errors)
+                if (!this.ModelState.IsValid)
                 {
-                    this.ModelState.AddModelError(string.Empty, error.Description);
+                    return this.View(model);
                 }
 
-                return this.View(model);
+                ApplicationUser user = new ApplicationUser
+                {
+                    UserName = model.UserName,
+                    Email = model.Email,
+                    Password = model.Password
+                };
+
+                await this.userManager.SetEmailAsync(user, model.Email);
+                await this.userManager.SetUserNameAsync(user, model.UserName);
+
+                IdentityResult result = await this.userManager.CreateAsync(user, model.Password);
+
+                if (!result.Succeeded)
+                {
+                    foreach (IdentityError error in result.Errors)
+                    {
+                        this.ModelState.AddModelError(string.Empty, error.Description);
+                    }
+
+                    return this.View(model);
+                }
+
+                return this.RedirectToAction(nameof(this.Login));
             }
 
-            return this.RedirectToAction(nameof(this.Login));
+            return this.RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
         [AllowAnonymous]
         public IActionResult Login()
         {
-            return this.View();
+            bool isAuthenticated = this.User?.Identity?.IsAuthenticated ?? false;
+
+            if (isAuthenticated == false)
+            {
+                return this.View();
+            }
+
+            return this.RedirectToAction("Index", "Home");
         }
 
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Login(UserLoginFormModel model)
         {
-            if (!this.ModelState.IsValid)
+            bool isAuthenticated = this.User?.Identity?.IsAuthenticated ?? false;
+
+            if (isAuthenticated == false)
             {
-                return this.View(model);
+                if (!this.ModelState.IsValid)
+                {
+                    return this.View(model);
+                }
+
+                var result = await this.signInManager.PasswordSignInAsync(model.UserName, model.Password, false, false);
+
+                if (!result.Succeeded)
+                {
+                    return this.View(model);
+                }
+
+                return this.RedirectToAction("All", "Book");
             }
 
-            var result = await this.signInManager.PasswordSignInAsync(model.UserName, model.Password, false, false);
-
-            if (!result.Succeeded)
-            {
-                return this.View(model);
-            }
-
-
-            return this.RedirectToAction("All", "Book");
+            return this.RedirectToAction("Index", "Home");
         }
 
         [HttpPost]
