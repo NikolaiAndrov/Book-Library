@@ -1,6 +1,7 @@
 using Library.Data;
 using Library.Data.Models;
-using Microsoft.AspNetCore.Identity;
+using Library.Services;
+using Library.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,8 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<LibraryDbContext>();
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<IBookService, BookService>();
 
 var app = builder.Build();
 
