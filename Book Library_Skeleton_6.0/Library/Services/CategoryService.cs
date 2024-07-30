@@ -29,5 +29,14 @@
 
             return categories;
         }
+
+        public async Task<bool> IsCategoryExistingByIdAsync(int id)
+        {
+            bool isCategoryExisting = await this.dbContext.Categories
+                .AsNoTracking()
+                .AnyAsync(c => c.Id == id);
+
+            return isCategoryExisting;
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿namespace Library.Services
 {
     using Library.Data;
+    using Library.Data.Models;
     using Library.Models.Book;
     using Library.Services.Interfaces;
     using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,22 @@
         public BookService(LibraryDbContext dbContext)
         {
             this.dbContext = dbContext;
+        }
+
+        public async Task AddBookAsync(BookAddPostModel model)
+        {
+            Book book = new Book
+            {
+                Title = model.Title,
+                Author = model.Author,
+                Description = model.Description,
+                ImageUrl = model.ImageUrl,
+                Rating = model.Rating,
+                CategoryId = model.CategoryId,
+            };
+
+            await this.dbContext.Books.AddAsync(book);
+            await this.dbContext.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<BookAllViewModel>> GetAllBooksAsync()

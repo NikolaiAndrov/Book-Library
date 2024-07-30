@@ -7,5 +7,7 @@
         Task<IEnumerable<BookAllViewModel>> GetAllBooksAsync();
 
         Task<IEnumerable<BookMineViewModel>> GetMyBooksAsync(string userId);
+
+        Task AddBookAsync(BookAddPostModel model);
     }
 }

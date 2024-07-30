@@ -68,5 +68,31 @@
 
             return this.View(model);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Add(BookAddPostModel model)
+        {
+            if (await this.categoryService.IsCategoryExistingByIdAsync(model.CategoryId) == false)
+            {
+                this.ModelState.AddModelError(nameof(model.CategoryId), "Not existing category!");
+            }
+
+            if (!this.ModelState.IsValid)
+            {
+                model.Categories = await this.categoryService.GetAllCategoriesAsync();
+                return this.View(model);
+            }
+
+            try
+            {
+                await this.bookService.AddBookAsync(model);
+            }
+            catch (Exception)
+            {
+                return this.RedirectToAction("Index", "Home");
+            }
+
+            return this.RedirectToAction("All", "Book");
+        }
     }
 }
